@@ -17,10 +17,10 @@
 	function getSentimentLabelsData() {
 		let keys = Object.keys(sentiment)
 		let index = keys.indexOf(selectedTime)
-		let labels = keys.slice(index - 12, index)
+		let labels = keys.slice(index - 24, index)
 		let data = labels.map(label => ({ 
 			x: Number(label), 
-			y: sentiment[label]['wsentiment']
+			y: sentiment[label]['percentage']
 		}))
 		return [labels, data]
 	}
@@ -28,7 +28,7 @@
 	function getPriceLabelsData() {
 		let keys = Object.keys(prices)
 		let index = keys.indexOf(selectedTime)
-		let labels = keys.slice(index - 12, index)
+		let labels = keys.slice(index - 24, index)
 		let data = labels.map(label => ({ 
 			x: Number(label), 
 			y: prices[label]['close']
@@ -87,7 +87,9 @@
 						title: {
 							display: true,
 							text: 'Sentiment/%'
-						}
+						},
+						min: -100,
+						max: 100,
 					},
 					B: {
 						type: 'linear',
