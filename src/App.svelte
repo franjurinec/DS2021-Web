@@ -14,7 +14,7 @@
 		configureChart()
 	});
 
-	function configureChart() {
+	function getSentimentLabelsData() {
 		let keys = Object.keys(sentiment)
 		let index = keys.indexOf(selectedTime)
 		let labels = keys.slice(index - 12, index)
@@ -22,8 +22,23 @@
 			x: Number(label), 
 			y: sentiment[label]['wsentiment']
 		}))
+		return [labels, data]
+	}
 
-		console.log(JSON.stringify(data))
+	function getPriceLabelsData() {
+		let keys = Object.keys(prices)
+		let index = keys.indexOf(selectedTime)
+		let labels = keys.slice(index - 12, index)
+		let data = labels.map(label => ({ 
+			x: Number(label), 
+			y: prices[label]['close']
+		}))
+		return [labels, data]
+	}
+
+	function configureChart() {
+		let [sent_labels, sent_data] = getSentimentLabelsData()
+		let [_, price_data] = getPriceLabelsData()
 
 		const ctx = document.getElementById('sentiment-chart').getContext('2d');
 
@@ -34,12 +49,21 @@
 		new Chart(ctx, {
 			type: 'line',
 			data: {
-				labels,
+				sent_labels,
 				datasets: [{
-					label: 'BTC Sentiment',
-					data: data,
+					label: 'Sentiment',
+					yAxisID: 'A',
+					data: sent_data,
 					borderColor: 'rgba(10, 136, 138, 1)',
 					backgroundColor: 'rgba(10, 136, 138, 1)',
+					borderWidth: 1
+				},
+				{
+					label: 'Price',
+					yAxisID: 'B',
+					data: price_data,
+					borderColor: 'rgba(255, 136, 138, 1)',
+					backgroundColor: 'rgba(255, 136, 138, 1)',
 					borderWidth: 1
 				}]
 			},
@@ -55,6 +79,22 @@
 							parser: function(time){
 								return getDateWithOffset(time, 7);
 							}
+						}
+					},
+					A: {
+						type: 'linear',
+						position: 'left',
+						title: {
+							display: true,
+							text: 'Sentiment/%'
+						}
+					},
+					B: {
+						type: 'linear',
+						position: 'right',
+						title: {
+							display: true,
+							text: 'Price/USD'
 						}
 					}
 				}
