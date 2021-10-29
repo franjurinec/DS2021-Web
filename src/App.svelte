@@ -4,7 +4,7 @@
 	import 'chartjs-adapter-moment';
 
 	import predictions from './predictions.json';
-	import sentiment from './nozerosent.json'
+	import sentiment from './sentiment.json'
 	import prices from './prices.json'
 
 	// Set initial time option
@@ -114,17 +114,39 @@
 		return date.toLocaleDateString('en-gb')
 	}
 
+	function currentSent(time) { return Math.round(sentiment[time]['percentage']) }
+	function currentPrice(time) { return Math.round(predictions[time]['close']) }
+
 </script>
 
 <main>
 	<h1 id="title">Welcome to the BTC sentiment app!</h1>
 	<div class="medium-text">
 		This week's sentiment is:
-		<span id="sentiment">{Math.round(sentiment[selectedTime]['wsentiment'])}</span>
+		<span class="bold" style={currentSent(selectedTime) >= 0 ? 'color: green' : 'color: red'}>
+			{currentSent(selectedTime) >= 0 ? (currentSent(selectedTime) + '% Positive') : (currentSent(selectedTime) + '% Negative')}
+		</span>
+		<span class="tip">
+			🛈
+			<span class="tooltip">
+				The sentiment percentage represents a relative value of current social sentiment compared to 
+				previously recorded values. <br> The source sentiment values are acquired using an advanced sentiment analysis
+				algorithm applied on top of a large batch of Tweets from this week!
+			</span>
+		</span>
 	</div>
 	<div class="medium-text">
 		Next weeks predicted price change:
-		<span id="price">{Math.round(predictions[selectedTime]['close'])} USD</span>
+		<span class="bold" style={currentPrice(selectedTime) >= 0 ? 'color: green' : 'color: red'}>
+			{currentPrice(selectedTime) >= 0 ? ('+' + currentPrice(selectedTime)) : currentPrice(selectedTime)} USD
+		</span>
+		<span class="tip">
+			🛈
+			<span class="tooltip">
+				The predicted price change is caluclated using a pre-trained model with data about price and sentiment from the last 15 weeks. <br> 
+				The model was originally trained on a large set of historical Twitter and price data.
+			</span>
+		</span>
 		
 	</div>
 	<div class="block">
@@ -160,23 +182,34 @@
 		font-size: 2em;
 	}
 
+	.bold {
+		font-weight: bolder;
+	}
+
 	.block {
 		width: 50em;
 		height: 25em;
 	}
 
-	#title {
-		font-size: 4em;
+	.tip:hover .tooltip {
+		display:block;
 	}
 
-	#sentiment {
-		color: green;
-		font-weight: bolder;
+	.tooltip {
+		display: none;
+		color: white;
+		font-size: 0.5em;
+		background: black;
+		border-radius: 10px;
+		padding: 16px;
+		margin-left: 28px; /* moves the tooltip to the right */
+		margin-top: 15px; /* moves it down */
+		position: absolute;
+		z-index: 1000;
 	}
-	
-	#price {
-		color: grey;
-		font-weight: bolder;
+
+	#title {
+		font-size: 4em;
 	}
 
 	#date-select-container {
