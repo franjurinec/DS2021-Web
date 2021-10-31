@@ -161,7 +161,7 @@
 		</div>
 		<select id="week" bind:value={selectedTime} on:change={configureChart}>
 			{#each Object.keys(predictions) as time}
-				<option value={time}>{dateString(time, -7) + ' - ' + dateString(time)}</option>
+				<option value={time}>{dateString(time)}</option>
 			{/each}
 		</select>
 	</div>
