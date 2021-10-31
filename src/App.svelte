@@ -116,8 +116,8 @@
 		return date.toLocaleDateString('en-gb')
 	}
 
-	function currentSent(time) { return Math.round(sentiment[time]['percentage']) }
-	function currentPrice(time) { return Math.round(predictions[time]['close']) }
+	function currentSent(time) { return Math.round(sentiment[String(Number(time) - 604800000)]['percentage']) }
+	function predictedPrice(time) { return Math.round(predictions[time]['close']) }
 
 </script>
 
@@ -139,8 +139,8 @@
 	</div>
 	<div class="medium-text">
 		Next weeks predicted price change:
-		<span class="bold" style={currentPrice(selectedTime) >= 0 ? 'color: green' : 'color: red'}>
-			{currentPrice(selectedTime) >= 0 ? ('+' + currentPrice(selectedTime)) : currentPrice(selectedTime)} USD
+		<span class="bold" style={predictedPrice(selectedTime) >= 0 ? 'color: green' : 'color: red'}>
+			{predictedPrice(selectedTime) >= 0 ? ('+' + predictedPrice(selectedTime)) : predictedPrice(selectedTime)} USD
 		</span>
 		<span class="tip">
 			🛈
@@ -161,7 +161,7 @@
 		</div>
 		<select id="week" bind:value={selectedTime} on:change={configureChart}>
 			{#each Object.keys(predictions) as time}
-				<option value={time}>{dateString(time) + ' - ' + dateString(time, 7)}</option>
+				<option value={time}>{dateString(time, -7) + ' - ' + dateString(time)}</option>
 			{/each}
 		</select>
 	</div>
